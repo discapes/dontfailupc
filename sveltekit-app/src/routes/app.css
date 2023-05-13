@@ -1,21 +1,65 @@
 @tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 h1 {
     font-size: xx-large;
+    margin-bottom: 5px;
 }
 
 h2 {
     font-size: x-large;
+    margin-bottom: 7px;
 }
 
 h3 {
     font-size: larger;
+    margin-bottom: 7px;
 }
 h4 {
     font-size: large;
 }
 h5 {
     font-size: medium;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+    background-color: white;
+	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+
+input[type="checkbox"] {
+	appearance: none;
+	min-width: 30px;
+	margin: 0;
+	display: grid;
+	place-content: center;
+}
+
+input[type="checkbox"]::before {
+	content: "";
+	width: 20px;
+	height: 20px;
+	transform: scale(0);
+	transition: 120ms transform ease-in-out;
+	box-shadow: inset 1em 1em white;
+	transform-origin: center;
+	clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+	transform: scale(1);
 }

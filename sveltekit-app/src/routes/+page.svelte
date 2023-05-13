@@ -44,11 +44,11 @@
 			window.location.href = window.location.href.slice(0, window.location.href.indexOf('#'));
 		}
 	</script>
-	{#if data.userInfo}
-		<img src={data.userInfo.picture} class="w-20 h-20" alt="profile" />
-		<h2>Hello {data.userInfo.nickname}.</h2>
-		<Button text="Logout" onClick={logout} icon={faRightFromBracket} />
+	{#if data.auth}
+		<img src={data.auth.picture} class="w-20 h-20" alt="profile" />
+		<h2>Hello {data.auth.nickname}.</h2>
+		<Button text="Sign out" clazz="p-3" onClick={logout} icon={faRightFromBracket} />
 	{:else}
-		<Button text="Login" onClick={login} icon={faRightToBracket} />
+		<Button text="Sign in" clazz="p-3" onClick={login} icon={faRightToBracket} />
 	{/if}
 </div>

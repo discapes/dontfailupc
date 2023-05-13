@@ -4,10 +4,17 @@
 
 	export let text: string;
 	export let icon: IconDefinition;
-	export let onClick: () => void;
+	export let type: 'button' | 'submit' | 'reset' | null | undefined = undefined;
+	export let color = 'bg-sky-700';
+	export let clazz = '';
+	export let onClick: (e: Event) => void = () => {};
 </script>
 
-<button on:click={onClick} class="bg-sky-700 p-3 rounded text-xl font-bold flex items-center gap-3">
+<button
+	on:click={onClick}
+	{type}
+	class="{color} {clazz} p-2 rounded text-xl font-bold center gap-3"
+>
 	<span>{text}</span>
 	<Fa {icon} />
 </button>
