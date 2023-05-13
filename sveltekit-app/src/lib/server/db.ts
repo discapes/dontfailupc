@@ -8,7 +8,8 @@ export const db = {
 	note_favorites: client.collection('note_favorites'),
 	users: client.collection('users'),
 	courses: client.collection('courses'),
-	notes: client.collection('notes')
+	notes: client.collection('notes'),
+	chat: client.collection('chat')
 };
 
 export async function spreadMongo<T>(iter: AsyncIterable<WithId<Document>>): Promise<T[]> {

@@ -12,6 +12,14 @@
 
 ### 👋 Introduction
 
+How to run:
+
+- `systemctl start mongodb`
+- set `MONGO_URL` and `AUTH0_SIGNKEY` in svelte-app/.env
+  - `npm i && npm run dev`
+- set `TOKEN_KEY` and `MONGO_DB` in chat/.env
+  - `cargo run`
+
 ### 📝 Structure
 
 ### 😄 How it works

@@ -31,7 +31,7 @@
 				class="absolute text-black right-3 top-3 text-2xl leading-[15px]">&times;</button
 			>
 			<textarea bind:value={text} class="outline-1 outline rounded p-2 h-80" name="json" />
-			<Button color={'bg-gray-400'} text="Submit" icon={faSave} type="submit" />
+			<Button clazz="text-white" text="Submit" icon={faSave} type="submit" />
 		</div>
 	</form>
 {/if}

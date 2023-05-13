@@ -1,21 +1,17 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 	import type { Message } from '$lib/types';
 	import type { PageData } from './$types';
 	import ChatMessage from './ChatMessage.svelte';
 
 	export let data: PageData;
 
-	var messages: Message[] = [];
+	let messages: Message[] = data.messages;
 
-	let pic =
-		'https://t3.ftcdn.net/jpg/03/39/45/96/360_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg';
-	const port = 3000;
-	const chat_id = 3;
 	let ws: WebSocket;
 	if (browser) {
-		ws = new WebSocket(`ws://localhost:${port}/chat/${chat_id}`);
-
+		ws = new WebSocket(`ws://localhost:3000/chat/${$page.params.slug}`);
 		ws.onopen = function () {
 			console.log('connection opened');
 			ws.onmessage = function (e) {
@@ -50,6 +46,9 @@
 			alert('You need to be logged in.');
 		}
 	}
+
+	const pic =
+		'https://t3.ftcdn.net/jpg/03/39/45/96/360_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg';
 </script>
 
 <svelte:head>
