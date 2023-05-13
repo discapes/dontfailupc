@@ -1,8 +1,8 @@
 import { authorizeSvelte } from '$lib/server/auth';
-import { db, deMongo, spreadMongo } from '$lib/server/db';
+import { db, spreadMongo } from '$lib/server/db';
 import { PLS_SIGN_IN } from '$lib/str';
 import type { Course } from '$lib/types';
-import { error, fail, type Actions, type ServerLoad } from '@sveltejs/kit';
+import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 
 function setFavorite(isFavorite: boolean) {
 	const action: Actions[0] = async ({ cookies, request }) => {

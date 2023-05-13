@@ -6,6 +6,7 @@ export const getNoteUrl = (
 ) => `/study/${courseSlug}/${lectureDatestamp}/${noteId}${edit ? '?edit' : ''}`;
 
 export const getCourseUrl = (courseSlug: string) => `/study/${courseSlug}`;
+export const getCourseChatUrl = (courseSlug: string) => `/study/${courseSlug}/chat`;
 export const getLectureUrl = (courseSlug: string, lectureDatestamp: string) =>
 	`/study/${courseSlug}/${lectureDatestamp}`;
 

@@ -5,7 +5,7 @@
 	export let text: string;
 	export let icon: IconDefinition;
 	export let type: 'button' | 'submit' | 'reset' | null | undefined = undefined;
-	export let color = 'bg-sky-700';
+	export let color = 'bg-sky-700 hover:bg-sky-800';
 	export let clazz = '';
 	export let onClick: (e: Event) => void = () => {};
 </script>
