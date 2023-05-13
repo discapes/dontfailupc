@@ -4,26 +4,26 @@ use axum::{
         Path,
     },
     headers::Cookie,
-    http::{Response, StatusCode},
+    http::StatusCode,
     response::IntoResponse,
     routing::get,
     Extension, Router, TypedHeader,
 };
-use futures::{sink::SinkExt, stream::StreamExt, TryStreamExt};
+use futures::{sink::SinkExt, stream::StreamExt};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
-use mongodb::bson::{doc, Document};
+use mongodb::bson::doc;
 use serde_derive::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::AppState;
 pub fn api_router() -> Router {
-    Router::new().route("/:id", get(websocket_handler))
+    Router::new().route("/:slug", get(websocket_handler))
 }
 
 async fn websocket_handler(
     ws: WebSocketUpgrade,
-    Path(id): Path<i32>,
+    Path(id): Path<String>,
     Extension(state): Extension<Arc<AppState>>,
     TypedHeader(auth): TypedHeader<Cookie>,
 ) -> impl IntoResponse {
@@ -50,57 +50,27 @@ pub struct ChatMessage {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 
 pub struct MessageModel {
-    chat_id: i32,
+    slug: String,
     user: String,
     message: String,
     timestamp: u64,
 }
 
-async fn websocket(stream: WebSocket, id: i32, state: Arc<AppState>) {
+async fn websocket(stream: WebSocket, slug: String, state: Arc<AppState>) {
     let (mut sender, mut receiver) = stream.split();
-
-    let coll = state
-        .client
-        .database("upc")
-        .collection::<MessageModel>("messages");
-    let old_msg = match coll.find(Some(doc! {"chat": id}), None).await {
-        Ok(cursor) => {
-            println!("{:?}", cursor);
-            cursor.try_collect().await.unwrap_or_else(|_| vec![])
-        }
-        Err(_) => vec![],
-    };
-
-    let mut send_vec = vec![];
-    for message in old_msg {
-        send_vec.push(ChatMessage {
-            user: message.user,
-            message: message.message,
-            timestamp: message.timestamp,
-        });
-    }
-
-    if let Ok(msg) = serde_json::to_string(&send_vec) {
-        if sender.send(Message::Text(msg)).await.is_err() {
-            return;
-        }
-    }
 
     let mut rx = state.tx.subscribe();
 
     let mut send_task = tokio::spawn(async move {
         while let Ok(msg) = rx.recv().await {
-            println!("{}", msg.0);
-            if msg.0 == id {
-                if let Ok(message) = serde_json::to_string(&msg.1) {
-                    println!("{}", message);
-                    if sender
-                        .send(Message::Text(format!("[{}]", message)))
-                        .await
-                        .is_err()
-                    {
-                        break;
-                    }
+            if let Ok(message) = serde_json::to_string(&msg.1) {
+                println!("{}", message);
+                if sender
+                    .send(Message::Text(format!("[{}]", message)))
+                    .await
+                    .is_err()
+                {
+                    break;
                 }
             }
         }
@@ -117,17 +87,15 @@ async fn websocket(stream: WebSocket, id: i32, state: Arc<AppState>) {
                 let mut msg = message.unwrap();
                 let now = SystemTime::now();
                 msg.timestamp = now.duration_since(UNIX_EPOCH).unwrap().as_secs();
-                let _ = tx.send((id, msg.clone()));
+                let _ = tx.send((slug.clone(), msg.clone()));
 
                 let message_model = MessageModel {
-                    chat_id: id,
+                    slug: slug.clone(),
                     user: msg.user,
                     message: msg.message,
                     timestamp: msg.timestamp,
                 };
-                let collection = client
-                    .database("upc")
-                    .collection::<MessageModel>("messages");
+                let collection = client.database("upc").collection::<MessageModel>("chat");
                 collection.insert_one(message_model, None).await.unwrap();
             }
         }

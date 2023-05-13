@@ -1,6 +1,5 @@
 use axum::{http::Uri, response::Redirect, routing::get, Extension, Router};
-use axum_server::tls_rustls::RustlsConfig;
-use mongodb::{bson::doc, options::ClientOptions, Client};
+use mongodb::{options::ClientOptions, Client};
 use std::{net::SocketAddr, sync::Arc};
 use tokio::sync::broadcast;
 use ws::ChatMessage;
@@ -10,7 +9,7 @@ use dotenv::dotenv;
 
 #[derive(Clone)]
 struct AppState {
-    tx: broadcast::Sender<(i32, ChatMessage)>,
+    tx: broadcast::Sender<(String, ChatMessage)>,
     client: Client,
 }
 
@@ -19,7 +18,7 @@ async fn main() {
     dotenv().ok();
 
     let uri = std::env::var("MONGO_DB").unwrap();
-    let mut client_options = ClientOptions::parse(uri).await.unwrap();
+    let client_options = ClientOptions::parse(uri).await.unwrap();
     let client = Client::with_options(client_options).unwrap();
 
     let (tx, _rx) = broadcast::channel(100);
