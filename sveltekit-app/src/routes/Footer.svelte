@@ -7,7 +7,7 @@
 		faToolbox,
 		type IconDefinition
 	} from '@fortawesome/free-solid-svg-icons';
-	import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+	import { faArrowAltCircleLeft } from '@fortawesome/free-regular-svg-icons';
 	import { page } from '$app/stores';
 	import { backBehaviour } from '$lib/url';
 
@@ -34,11 +34,13 @@
 	}
 </script>
 
-<div class="bg-sky-700 p-5 flex items-center justify-evenly gap-10">
+<div class="bg-sky-700 py-3 flex items-center justify-evenly">
 	{#each tabs as [path, icon]}
 		<a href={path}>
 			<Fa size={pathCompare($page.url.pathname, path) ? '3x' : '2x'} color="white" {icon} /></a
 		>
 	{/each}
-	<a href={getBackUrl($page.url.pathname)}> <Fa size="2x" color="white" icon={faArrowLeft} /></a>
+	<a href={getBackUrl($page.url.pathname)}>
+		<Fa size="2x" color="lightgrey" icon={faArrowAltCircleLeft} /></a
+	>
 </div>

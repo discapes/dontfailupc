@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import Button from './Button.svelte';
 	import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from '../lib/config';
+	import { split } from 'postcss/lib/list';
 
 	export let data: PageData;
 
@@ -41,7 +42,7 @@
 			const params = new URLSearchParams(window.location.hash.slice(1));
 			console.log(...params.entries());
 			document.cookie = `id_token=${params.get('id_token')}`;
-			window.location.href = window.location.href.slice(0, window.location.href.indexOf('#'));
+			window.location.href = window.location.href.split('#')[0];
 		}
 	</script>
 	{#if data.auth}

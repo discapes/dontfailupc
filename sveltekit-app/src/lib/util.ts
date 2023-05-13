@@ -7,3 +7,8 @@ export async function spreadAsync<T>(iter: AsyncIterable<T>): Promise<Array<T>> 
 export function addOrRemove<T>(arr: T[], item: T) {
 	return arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item];
 }
+
+export function emailShort(email: string) {
+	if (!email.includes('@')) return email;
+	else return email.slice(0, email.lastIndexOf('@'));
+}

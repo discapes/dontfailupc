@@ -9,6 +9,7 @@
 	import { faPen, faPlus, faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 	import { page } from '$app/stores';
 	import { getNoteUrl } from '$lib/url';
+	import { emailShort } from '$lib/util';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -62,7 +63,7 @@
 					href={getNoteUrl($page.params.slug, note._id)}
 					class="bg-sky-600 p-3 center justify-start w-full h-10 {note.own && 'font-bold'}"
 				>
-					{note.email ? note.email.slice(0, note.email.lastIndexOf('@')) : note._id}
+					{note.email ? emailShort(note.email) : note._id}
 				</a>
 			</li>
 		{/each}
