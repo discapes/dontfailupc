@@ -9,13 +9,20 @@
 
 </div>
 
-<h3>👋 Introduction</h3>
+### 👋 Introduction
 
-<h3>📝 Structure</h3>
+### 📝 Structure
 
-<h3>😄 How it works</h3>
+### 😄 How it works
 
-<h3>       <picture><img src = "https://github.com/discapes/hackupc2023/blob/master/assets/about_me.gif" width = 25px></picture> Contributors</h3>
+### Additional challenges (MLH)
+
+- GitHub
+- Domain.com
+- Auth0
+- MongoDB Atlas
+
+### <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/about_me.gif" width = 25px> Contributors
 
 - Miika Tuominen
 - Júlia Alós
