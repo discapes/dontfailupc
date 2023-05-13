@@ -26,20 +26,16 @@ async fn websocket_handler(
     TypedHeader(auth): TypedHeader<Cookie>,
 ) -> impl IntoResponse {
     if let Some(token) = auth.get("id_token") {
-        println!("{token}");
         if let Ok(token_message) = decode::<ClaimsContent>(
             &token,
             &DecodingKey::from_secret(std::env::var("TOKEN_KEY").unwrap().as_bytes()),
             &Validation::new(Algorithm::HS256),
         ) {
-            println!("{}", token_message.claims.email);
             ws.on_upgrade(move |socket| websocket(socket, id, state))
         } else {
-            println!("AA");
             StatusCode::NOT_FOUND.into_response()
         }
     } else {
-        println!("sssssAA");
         StatusCode::NOT_FOUND.into_response()
     }
 }
