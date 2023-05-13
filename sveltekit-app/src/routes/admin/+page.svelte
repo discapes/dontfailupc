@@ -6,7 +6,7 @@
 	import { flip } from 'svelte/animate';
 	import type { ActionData, PageData } from './$types';
 	import Editor from './Editor.svelte';
-	import type { Course } from '$lib/course';
+	import type { Course } from '$lib/types';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -22,7 +22,8 @@
 	function create() {
 		editingCourse = {
 			name: '',
-			slug: ''
+			slug: '',
+			lectures: []
 		};
 	}
 	function edit(course: Course) {

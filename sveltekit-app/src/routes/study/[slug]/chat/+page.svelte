@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import type { Message } from '$lib/types';
 	import type { PageData } from './$types';
 	import ChatMessage from './ChatMessage.svelte';
-	import type { Message } from './message';
 
 	export let data: PageData;
 
@@ -93,15 +93,5 @@
 		transition: -webkit-transform 0.5s ease-in-out;
 		transition: transform 0.5s ease-in-out;
 		transition: transform 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
-	}
-
-	.contacts-img {
-		border-radius: 50%;
-		width: 40px;
-		height: 40px;
-	}
-	.contacts-name {
-		margin-left: 15px;
-		font-weight: 600;
 	}
 </style>

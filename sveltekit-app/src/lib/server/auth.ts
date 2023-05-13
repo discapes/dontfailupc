@@ -1,5 +1,5 @@
 import { AUTH0_SIGNKEY } from '$env/static/private';
-import type { Auth } from '$lib/user';
+import type { Auth } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 

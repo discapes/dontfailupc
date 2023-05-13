@@ -1,17 +1,19 @@
-import type { Note } from '$lib/course';
+import type { Note } from '$lib/types';
 import { authorizeSvelte } from '$lib/server/auth';
 import { db, deMongo } from '$lib/server/db';
 import { saveNote } from '$lib/server/saveNote';
 import { error } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
 import type { Actions, PageServerLoad } from './$types';
+import { isoDate } from '$lib/util';
 
 export const actions: Actions = {
-	async save({ cookies, request, params: { slug } }) {
+	async save({ cookies, request, params: { slug, lecture } }) {
 		const formData = await request.formData();
 		const id = await saveNote(
 			cookies,
 			slug,
+			lecture,
 			formData.get('text')?.toString(),
 			formData.has('anonymous')
 		);

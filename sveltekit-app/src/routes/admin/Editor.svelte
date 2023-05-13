@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { faSave } from '@fortawesome/free-solid-svg-icons';
-	import Button from '../Button.svelte';
-	import type { Course } from '$lib/course';
+	import Button from '../../lib/components/Button.svelte';
+	import type { Course } from '$lib/types';
 
 	export let editingCourse: Partial<Course> | null;
 	export let text = '';

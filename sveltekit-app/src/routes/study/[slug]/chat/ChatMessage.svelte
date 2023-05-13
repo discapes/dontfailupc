@@ -1,7 +1,5 @@
 <script lang="ts">
-	import Fa from 'svelte-fa';
-	import { faCheck, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
-	import type { Message } from './message';
+	import type { Message } from '$lib/types';
 	import { emailShort } from '$lib/util';
 
 	export let message: Message;
@@ -119,13 +117,5 @@
 		color: #999;
 
 		margin-bottom: 0;
-	}
-
-	.read-icon {
-		color: #007bff;
-	}
-
-	.un-read-icon {
-		color: #8f8f8f8f;
 	}
 </style>

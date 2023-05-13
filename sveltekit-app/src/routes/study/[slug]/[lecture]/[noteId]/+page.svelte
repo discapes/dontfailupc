@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { faEye, faPen, faSave } from '@fortawesome/free-solid-svg-icons';
-	import Button from '../../../../Button.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

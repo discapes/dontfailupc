@@ -38,7 +38,7 @@
 </script>
 
 <div>
-	<h1 class="p-10">Team chat...</h1>
+	<h1 class="p-10">Groups</h1>
 	<div class="row">
 		{#each chat_list as chat}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->

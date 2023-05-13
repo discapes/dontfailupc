@@ -12,3 +12,5 @@ export function emailShort(email: string) {
 	if (!email.includes('@')) return email;
 	else return email.slice(0, email.lastIndexOf('@'));
 }
+
+export const isoDate = () => new Date().toISOString().split('T')[0];

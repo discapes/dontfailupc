@@ -6,6 +6,7 @@ import { PLS_SIGN_IN } from '$lib/str';
 export async function saveNote(
 	cookies: Cookies,
 	courseSlug: string,
+	isoDate: string,
 	text: string = '',
 	anonymous = true
 ) {
@@ -14,10 +15,11 @@ export async function saveNote(
 
 	const noteFilter = {
 		email: auth.email,
-		courseSlug
+		courseSlug,
+		isoDate
 	};
 
 	return (
 		await db.notes.replaceOne(noteFilter, { ...noteFilter, anonymous, text }, { upsert: true })
-	).upsertedId as string;
+	).upsertedId?.toString();
 }

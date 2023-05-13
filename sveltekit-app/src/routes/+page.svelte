@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-	import type { PageData } from './$types';
-	import Button from './Button.svelte';
+	import { faRightFromBracket, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
+	import Button from '$lib/components/Button.svelte';
 	import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from '../lib/config';
-	import { split } from 'postcss/lib/list';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -36,7 +35,8 @@
 	}
 </script>
 
-<div class="p-10 grow flex justify-center flex-col items-center gap-5">
+<div class="p-10 grow relative flex justify-center flex-col items-center gap-5">
+	<h1 class="absolute left-10 top-10">Home</h1>
 	<script>
 		if (window?.location?.hash?.startsWith('#id_token')) {
 			const params = new URLSearchParams(window.location.hash.slice(1));
