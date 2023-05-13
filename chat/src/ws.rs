@@ -9,10 +9,12 @@ use axum::{
     routing::get,
     Extension, Router, TypedHeader,
 };
-use futures::{sink::SinkExt, stream::StreamExt};
+use futures::{sink::SinkExt, stream::StreamExt, TryStreamExt};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
+use mongodb::bson::{doc, Document};
 use serde_derive::{Deserialize, Serialize};
 use std::sync::Arc;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::AppState;
 pub fn api_router() -> Router {
@@ -26,7 +28,7 @@ async fn websocket_handler(
     TypedHeader(auth): TypedHeader<Cookie>,
 ) -> impl IntoResponse {
     if let Some(token) = auth.get("id_token") {
-        if let Ok(token_message) = decode::<ClaimsContent>(
+        if let Ok(_token_message) = decode::<ClaimsContent>(
             &token,
             &DecodingKey::from_secret(std::env::var("TOKEN_KEY").unwrap().as_bytes()),
             &Validation::new(Algorithm::HS256),
@@ -43,61 +45,46 @@ async fn websocket_handler(
 pub struct ChatMessage {
     user: String,
     message: String,
-    timestamp: Option<f64>,
+    timestamp: u64,
+}
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+
+pub struct MessageModel {
+    chat_id: i32,
+    user: String,
+    message: String,
+    timestamp: u64,
 }
 
 async fn websocket(stream: WebSocket, id: i32, state: Arc<AppState>) {
     let (mut sender, mut receiver) = stream.split();
 
-    // let rows =state
-    //     .client
-    //     .blocking_lock()
-    //     .query("SELECT user_name, message, created_at FROM message,user WHERE team_id = $1 AND user_id = user.id ORDER BY created_at", &[&id]);
+    let coll = state
+        .client
+        .database("upc")
+        .collection::<MessageModel>("messages");
+    let old_msg = match coll.find(Some(doc! {"chat": id}), None).await {
+        Ok(cursor) => {
+            println!("{:?}", cursor);
+            cursor.try_collect().await.unwrap_or_else(|_| vec![])
+        }
+        Err(_) => vec![],
+    };
 
-    // if rows.is_ok() {
-    //     return;
-    // }
+    let mut send_vec = vec![];
+    for message in old_msg {
+        send_vec.push(ChatMessage {
+            user: message.user,
+            message: message.message,
+            timestamp: message.timestamp,
+        });
+    }
 
-    let old_msg: Vec<ChatMessage> = [
-        ChatMessage {
-            user: "manola".to_string(),
-            message: "hello".to_string(),
-            timestamp: Some(1587139022488.826),
-        },
-        ChatMessage {
-            user: "manolo".to_string(),
-            message: "hello2".to_string(),
-            timestamp: Some(1587139022488.826),
-        },
-        ChatMessage {
-            user: "manola".to_string(),
-            message: "hello3".to_string(),
-            timestamp: Some(1587139022488.826),
-        },
-    ]
-    .to_vec();
-    if let Ok(msg) = serde_json::to_string(&old_msg) {
+    if let Ok(msg) = serde_json::to_string(&send_vec) {
         if sender.send(Message::Text(msg)).await.is_err() {
             return;
         }
     }
-
-    // for row in rows.unwrap() {
-    //     let user: String = row.get(0);
-    //     let message: String = row.get(1);
-    //     let timestamp: Option<String> = row.get(2);
-
-    //     let chat_message = ChatMessage {
-    //         user,
-    //         message,
-    //         timestamp,
-    //     };
-    //     if let Ok(msg) = serde_json::to_string(&chat_message) {
-    //         if sender.send(Message::Text(msg)).await.is_err() {
-    //             return;
-    //         }
-    //     }
-    // }
 
     let mut rx = state.tx.subscribe();
 
@@ -120,27 +107,28 @@ async fn websocket(stream: WebSocket, id: i32, state: Arc<AppState>) {
     });
 
     let tx = state.tx.clone();
-    // let client = state.client.clone();
+    let client = state.client.clone();
 
     let mut recv_task = tokio::spawn(async move {
         while let Some(Ok(Message::Text(msg))) = receiver.next().await {
             let message: Result<ChatMessage, serde_json::Error> = serde_json::from_str(&msg);
 
-            let user_id: i32 = 0; // TODO
-
             if message.is_ok() {
                 let mut msg = message.unwrap();
-                // if let Ok(res) =client
-                //     .blocking_lock().query(
-                //     "INSERT INTO message (user_id, team_id, message) VALUES ($1, $2, $3) RETURNING created_at",
-                //     &[&user_id, &id, &msg.message],
-                // ){
-                //     let timestrap:String = res.get(0).unwrap().get(0);
-                //     msg.timestamp= Some(timestrap);
-                //     let _ = tx.send((id, msg));
-                // }
-                msg.timestamp = Some(1587139022488.826);
-                let _ = tx.send((id, msg));
+                let now = SystemTime::now();
+                msg.timestamp = now.duration_since(UNIX_EPOCH).unwrap().as_secs();
+                let _ = tx.send((id, msg.clone()));
+
+                let message_model = MessageModel {
+                    chat_id: id,
+                    user: msg.user,
+                    message: msg.message,
+                    timestamp: msg.timestamp,
+                };
+                let collection = client
+                    .database("upc")
+                    .collection::<MessageModel>("messages");
+                collection.insert_one(message_model, None).await.unwrap();
             }
         }
     });
