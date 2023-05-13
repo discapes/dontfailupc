@@ -1,31 +1,21 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
+	import type { Message } from '$lib/types';
+	import type { PageData } from './$types';
 	import ChatMessage from './ChatMessage.svelte';
 
-	import Fa from 'svelte-fa';
-	import {
-		faUsers,
-		faCompressArrowsAlt,
-		faComments,
-		faEnvelope
-	} from '@fortawesome/free-solid-svg-icons';
+	export let data: PageData;
 
 	var messages: Message[] = [];
 
-	type Message = {
-		user: string;
-		message: string;
-		timestamp: number;
-	};
-	let text = '';
-	let profilePic =
+	let pic =
 		'https://t3.ftcdn.net/jpg/03/39/45/96/360_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg';
 	const port = 3000;
 	const chat_id = 3;
-	const ws = new WebSocket(`ws://localhost:${port}/chat/${chat_id}`);
-
+	let ws: WebSocket;
 	if (browser) {
+		ws = new WebSocket(`ws://localhost:${port}/chat/${chat_id}`);
+
 		ws.onopen = function () {
 			console.log('connection opened');
 			ws.onmessage = function (e) {
@@ -39,15 +29,26 @@
 			};
 		};
 	}
-	function handleClick() {
-		let message: Message = {
-			user: 'manolo',
-			message: text,
-			timestamp: 0
-		};
-		let serde: string = JSON.stringify(message);
-		ws.send(serde);
-		text = '';
+
+	function scrollBottom() {
+		const dc = document!.querySelector('.direct-chat-messages')!.parentElement!;
+		setTimeout(() => (dc.scrollTop = dc?.scrollHeight ?? 0), 1);
+	}
+
+	function kd(this: any) {
+		if (this.msg.value && data.auth) {
+			const msg = this.msg.value;
+			let message: Message = {
+				user: data.auth.email,
+				message: msg,
+				timestamp: Date.now()
+			};
+			ws.send(JSON.stringify(message));
+			this.reset();
+			scrollBottom();
+		} else if (this.msg.value) {
+			alert('You need to be logged in.');
+		}
 	}
 </script>
 
@@ -57,34 +58,36 @@
 		href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	/>
 </svelte:head>
-<div class="card card-danger grow flex flex-col">
-	<div class="card-header flex items-center gap-3">
-		<Fa icon={faUsers} />{$page.params.chat}
-	</div>
-	<div class="grow">
+
+<div class="grow card card-danger direct-chat direct-chat-danger h-full w-full">
+	<div class="card-body">
 		<div class="direct-chat-messages">
 			{#each messages as message}
-				<ChatMessage nameMe={message.user} {profilePic} message={message.message} />
+				<ChatMessage {pic} {message} right={message.user == data.auth?.email} />
 			{/each}
 		</div>
 	</div>
 	<div class="card-footer">
-		<div class="input-group">
-			<input type="text" placeholder="Type Message ..." class="form-control" bind:value={text} />
+		<form class="input-group" on:submit|preventDefault={kd}>
+			<input type="text" name="msg" placeholder="Type Message ..." class="form-control" />
 			<span class="input-group-append">
-				<button type="button" class="btn btn-primary" on:click={() => handleClick()}>Send</button>
+				<input type="submit" class="btn btn-primary bg-[#007bff]" value="Send" />
 			</span>
-		</div>
+		</form>
 	</div>
 </div>
 
 <style>
-	.card-header {
-		background-color: cornflowerblue;
+	.direct-chat .card-body {
+		overflow-x: hidden;
+		padding: 0;
+		position: relative;
 	}
+
 	.direct-chat-messages {
 		-webkit-transform: translate(0, 0);
 		transform: translate(0, 0);
+		/* height: 350px; */
 		overflow: auto;
 		padding: 10px;
 		transition: -webkit-transform 0.5s ease-in-out;

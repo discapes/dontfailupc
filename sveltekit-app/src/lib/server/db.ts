@@ -8,7 +8,6 @@ export const db = {
 	note_favorites: client.collection('note_favorites'),
 	users: client.collection('users'),
 	courses: client.collection('courses'),
-
 	notes: client.collection('notes')
 };
 

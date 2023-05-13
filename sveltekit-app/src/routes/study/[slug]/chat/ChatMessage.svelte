@@ -1,39 +1,38 @@
-<script>
-	import Fa from 'svelte-fa';
-	import { faCheck, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
+<script lang="ts">
+	import type { Message } from '$lib/types';
+	import { emailShort } from '$lib/util';
 
-	export let nameChatPartner = 'manolo';
-	/**
-	 * @type {string}
-	 */
-	export let nameMe;
-	/**
-	 * @type {string}
-	 */
-	export let message;
-
-	/**
-	 * @type {any}
-	 */
-	export let profilePic;
+	export let message: Message;
+	export let pic: string;
+	export let right: boolean;
+	$: ({ timestamp } = message);
 </script>
 
-<div
-	class="direct-chat-msg"
-	class:right={nameMe == nameChatPartner}
-	class:left={nameMe != nameChatPartner}
->
-	<div
-		class="direct-chat-timestamp"
-		class:float-left={nameMe == nameChatPartner}
-		class:float-right={nameMe != nameChatPartner}
-	>
-		<hi>HOLA</hi>
+<div class="direct-chat-msg" class:right class:left={!right}>
+	<div class="direct-chat-infos clearfix">
+		<span class="direct-chat-name" class:float-right={right} class:float-left={!right}
+			>{emailShort(message.user)}</span
+		>
+
+		<span class="direct-chat-timestamp" class:float-left={right} class:float-right={!right}>
+			{#if true}
+				{new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+			{:else}
+				{new Date(timestamp).toLocaleString([], {
+					year: 'numeric',
+					month: '2-digit',
+					day: '2-digit',
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false
+				})}
+			{/if}
+		</span>
 	</div>
-	<img class="direct-chat-img" src={profilePic} alt="pic" />
+	<img class="direct-chat-img" src={pic} alt="pic" />
 	<div class="direct-chat-text">
 		<div class="d-flex">
-			<span class="mr-auto">{message}</span>
+			<span class="mr-auto">{message.message} </span>
 		</div>
 	</div>
 </div>
@@ -58,8 +57,8 @@
 		border-radius: 5px;
 		position: relative;
 		padding: 5px 10px;
-		background: #d2d6de;
-		border: 1px solid #d2d6de;
+		background: rgba(179, 242, 221, 0.7);
+		border: 1px solid rgba(179, 242, 221, 0.7);
 		margin: 2px 0 5px 50px;
 		color: #444;
 		margin-right: 50px;
@@ -70,7 +69,7 @@
 		right: 100%;
 		top: 15px;
 		border: solid transparent;
-		border-right-color: #d2d6de;
+		border-right-color: rgba(179, 242, 221, 0.7);
 		content: ' ';
 		height: 0;
 		width: 0;
@@ -105,10 +104,17 @@
 		float: right;
 	}
 
+	.direct-chat-infos {
+		font-size: 0.8rem;
+	}
+	.direct-chat-name {
+		font-weight: 600;
+		color: #999;
+	}
 	.direct-chat-timestamp {
 		margin-left: 50px;
 		margin-right: 50px;
-		color: black;
+		color: #999;
 
 		margin-bottom: 0;
 	}

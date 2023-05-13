@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import type { Course } from '$lib/course';
+	import type { Course } from '$lib/types';
 	import { faStar } from '@fortawesome/free-regular-svg-icons';
 	import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
@@ -24,7 +24,7 @@
 </script>
 
 <main class="p-10">
-	<h1>Study...</h1>
+	<h1>Study</h1>
 	<h2>Courses:</h2>
 	<ul class="flex flex-col gap-1 max-w-xs">
 		{#each courses.sort(sortCourses) as course (course._id)}
