@@ -24,6 +24,11 @@ How to run:
 
 ### 😄 How it works
 
+<div>
+ <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/Auth0_login.gif" width = 49%>
+ <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/courses.gif" width = 49%>
+ </div>
+
 ### Additional challenges (MLH)
 
 - GitHub
