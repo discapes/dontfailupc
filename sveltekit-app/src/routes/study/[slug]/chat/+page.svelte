@@ -25,7 +25,7 @@
 				} else {
 					messages = [...messages, msg[0]];
 				}
-				console.log('received message: ' + messages);
+				console.log('received message: ', messages);
 			};
 		};
 	}

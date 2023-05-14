@@ -31,10 +31,12 @@ pub async fn websocket_handler(
         ) {
             ws.on_upgrade(move |socket| websocket(socket, id, state))
         } else {
-            StatusCode::NOT_FOUND.into_response()
+            tracing::info!("id_token invalid");
+            StatusCode::FORBIDDEN.into_response()
         }
     } else {
-        StatusCode::NOT_FOUND.into_response()
+        tracing::info!("No cookie id_token found");
+        StatusCode::FORBIDDEN.into_response()
     }
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -53,6 +55,8 @@ pub struct MessageModel {
 }
 
 async fn websocket(stream: WebSocket, slug: String, state: Arc<AppState>) {
+    tracing::info!("upgraded to websocket, slug={slug}");
+
     let (mut sender, mut receiver) = stream.split();
 
     let mut rx = state.tx.subscribe();

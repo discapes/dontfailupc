@@ -2,6 +2,8 @@ use axum::{routing::get, Extension, Router};
 use mongodb::{options::ClientOptions, Client};
 use std::{net::SocketAddr, sync::Arc};
 use tokio::sync::broadcast;
+use tower_http::trace::{self, TraceLayer};
+use tracing::Level;
 use ws::{websocket_handler, ChatMessage};
 
 pub mod ws;
@@ -15,6 +17,11 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt()
+        .with_target(false)
+        .compact()
+        .init();
+
     dotenv().ok();
 
     let uri = std::env::var("MONGO_DB").unwrap();
@@ -32,9 +39,15 @@ async fn main() {
 async fn websocket_server(app_state: Arc<AppState>) {
     let app = Router::new()
         .route("/chat/:slug", get(websocket_handler))
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
+        )
         .layer(Extension(app_state));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    tracing::info!("listening on {}", addr);
 
     axum_server::bind(addr)
         .serve(app.into_make_service())
