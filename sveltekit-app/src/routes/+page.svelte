@@ -36,7 +36,7 @@
 </script>
 
 <div class="p-10 grow relative flex justify-center flex-col items-center gap-5">
-	<img src="icon.PNG" alt="background image" />
+	<img src="icon.png" alt="background" />
 
 	<script>
 		if (window?.location?.hash?.startsWith('#id_token')) {

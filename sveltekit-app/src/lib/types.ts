@@ -9,6 +9,7 @@ export type Lecture = {
 	datestamp: string;
 	creator: string;
 	topic: string;
+	source?: string;
 };
 
 export type Note = {
@@ -17,10 +18,14 @@ export type Note = {
 	anonymous: boolean;
 	email: string;
 	text: string;
+	score?: number;
+	reason?: string;
+	diff?: number;
 	_id: string;
 };
 
 export type NoteFavorite = {
+	isoDate: string;
 	courseSlug: string;
 	email: string;
 	noteId: string;

@@ -19,6 +19,8 @@ How to run:
   - `npm i && npm run dev`
 - set `TOKEN_KEY` and `MONGO_DB` in chat/.env
   - `cargo run`
+- `pip install yake`
+  - `python backend/yake/app.py`
 
 ### 📝 Structure
 

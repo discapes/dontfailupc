@@ -1,19 +1,17 @@
-import type { Note } from '$lib/types';
 import { authorizeSvelte } from '$lib/server/auth';
 import { db, deMongo } from '$lib/server/db';
 import { saveNote } from '$lib/server/saveNote';
+import type { Note } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
 import type { Actions, PageServerLoad } from './$types';
-import { isoDate } from '$lib/util';
 
 export const actions: Actions = {
-	async save({ cookies, request, params: { slug, lecture } }) {
+	async save({ cookies, request, params }) {
 		const formData = await request.formData();
 		const id = await saveNote(
 			cookies,
-			slug,
-			lecture,
+			params,
 			formData.get('text')?.toString(),
 			formData.has('anonymous')
 		);
@@ -32,6 +30,9 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 		text: note.text,
 		email: note.anonymous ? null : note.email,
 		own: note.email == auth?.email,
-		anonymous: note.anonymous
+		anonymous: note.anonymous,
+		score: note.score,
+		reason: note.reason,
+		diff: note.diff
 	};
 };

@@ -7,18 +7,24 @@ import { error, fail, type ServerLoad } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	async save({ cookies, params, url }) {
+	async save({ cookies, params, request }) {
 		const auth = authorizeSvelte(cookies);
 		if (!auth) return fail(401, { msg: PLS_SIGN_IN });
+
 		const course = await deMongo<Course>(db.courses.findOne({ slug: params.slug }));
 		if (!course) throw error(404, 'Not found');
+
+		const formData = await request.formData();
+		const topic = formData.get('topic')?.toString();
+		if (!topic || !topic.length) return fail(400, { msg: 'No topic specified' });
+
 		const datestamp = isoDate();
 		const prev = course.lectures.find((l) => l.datestamp == datestamp);
 		if (!prev || prev.creator == auth.email) {
 			const lecture: Lecture = {
 				creator: auth.email,
 				datestamp,
-				topic: '()'
+				topic
 			};
 			await db.courses.updateOne(
 				{ slug: course.slug },

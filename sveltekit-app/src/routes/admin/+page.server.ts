@@ -1,15 +1,14 @@
-import type { Course } from '$lib/course';
 import { authorizeSvelte } from '$lib/server/auth';
 import { db, spreadMongo } from '$lib/server/db';
 import { PLS_SIGN_IN } from '$lib/str';
-import type { User } from '$lib/user';
+import type { Course, User } from '$lib/types';
 import { error, fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
 
 export const actions: Actions = {
 	async upsert({ cookies, request }) {
-		const user = authorizeSvelte(cookies);
-		if (!user) return fail(401, { msg: PLS_SIGN_IN });
+		const auth = authorizeSvelte(cookies);
+		if (!auth?.app_metadata.admin) throw error(401, 'Forbidden');
 
 		const json = (await request.formData()).get('json')?.toString();
 		let obj;
@@ -22,8 +21,9 @@ export const actions: Actions = {
 		}
 	},
 	async delete({ cookies, request }) {
-		const user = authorizeSvelte(cookies);
-		if (!user) return fail(401, { msg: PLS_SIGN_IN });
+		const auth = authorizeSvelte(cookies);
+		if (!auth?.app_metadata.admin) throw error(401, 'Forbidden');
+
 		const id = (await request.formData()).get('id')?.toString();
 		if (!id) return fail(404, { msg: 'Invalid id' });
 		await db.courses.deleteOne({ _id: new ObjectId(id) });

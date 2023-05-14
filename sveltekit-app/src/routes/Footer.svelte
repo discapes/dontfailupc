@@ -34,7 +34,7 @@
 	}
 </script>
 
-<div class="bg-sky-700 h-20 flex items-center justify-evenly">
+<div class="bg-sky-700 h-20 flex items-center justify-evenly shrink-0">
 	{#each tabs as [path, icon]}
 		<a href={path}>
 			<Fa size={pathCompare($page.url.pathname, path) ? '3x' : '2x'} color="white" {icon} /></a

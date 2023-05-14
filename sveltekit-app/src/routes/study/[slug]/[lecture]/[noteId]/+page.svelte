@@ -3,17 +3,36 @@
 	import { faEye, faPen, faSave } from '@fortawesome/free-solid-svg-icons';
 	import Button from '$lib/components/Button.svelte';
 	import type { PageData } from './$types';
+	import Badge from '../Badge.svelte';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
-	let { text, anonymous, own } = data;
-	let noteEditor = new URLSearchParams($page.url.search).has('edit') && own;
+	$: ({ anonymous, own, score, reason, diff } = data);
+
+	let { text } = data;
+	function onDataChange(_: unknown) {
+		text = data.text;
+	}
+	$: onDataChange(data);
+
+	$: noteEditor = new URLSearchParams($page.url.search).has('edit') && own;
 </script>
 
 <main class="p-10">
 	<h1>Note {noteEditor ? 'Editor' : 'Viewer'}</h1>
 	<div class="flex flex-col gap-3">
+		{#if diff}
+			Keyword difference: {diff}
+		{/if}
+		{#if score && reason}
+			<div>
+				GPT review:
+				<Badge percent={score} /> -
+				{reason}
+			</div>
+		{/if}
 		{#if noteEditor}
-			<form method="post" class="contents" action="?/save">
+			<form use:enhance method="post" class="contents" action="?/save">
 				<textarea
 					bind:value={text}
 					class="outline-1 outline-white w-full bg-sky-600 outline rounded p-2 h-80"
@@ -43,7 +62,7 @@
 			{#if own}
 				<Button clazz="grow" text="Edit" icon={faPen} onClick={() => (noteEditor = true)} />
 			{/if}
-			<pre class="outline outline-1 outline-white rounded p-5">{text}</pre>
+			<div class="outline outline-1 outline-white rounded p-5">{text}</div>
 		{/if}
 	</div>
 </main>
