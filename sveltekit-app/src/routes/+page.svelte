@@ -36,7 +36,8 @@
 </script>
 
 <div class="p-10 grow relative flex justify-center flex-col items-center gap-5">
-	<h1 class="absolute left-10 top-10">Home</h1>
+	<img src="icon.PNG" alt="background image" />
+
 	<script>
 		if (window?.location?.hash?.startsWith('#id_token')) {
 			const params = new URLSearchParams(window.location.hash.slice(1));
@@ -48,8 +49,18 @@
 	{#if data.auth}
 		<img src={data.auth.picture} class="w-20 h-20" alt="profile" />
 		<h2>Hello {data.auth.nickname}.</h2>
-		<Button text="Sign out" clazz="p-3" onClick={logout} icon={faRightFromBracket} />
+		<div class="btn">
+			<Button text="Sign out" clazz="p-3" onClick={logout} icon={faRightFromBracket} />
+		</div>
 	{:else}
-		<Button text="Sign in" clazz="p-3" onClick={login} icon={faRightToBracket} />
+		<div class="btn">
+			<Button text="Sign in" clazz="p-3" onClick={login} icon={faRightToBracket} />
+		</div>
 	{/if}
 </div>
+
+<style>
+	.btn {
+		margin-top: 60%;
+	}
+</style>
