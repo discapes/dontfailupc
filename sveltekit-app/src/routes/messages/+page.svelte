@@ -6,30 +6,19 @@
 		id: number;
 	};
 	let chat1: Chat = {
-		name: 'Chat1',
+		name: 'Basic algorithms',
 		id: 1
 	};
 	let chat2: Chat = {
-		name: 'Chat2',
+		name: 'Introdution to block chain',
 		id: 2
 	};
 	let chat3: Chat = {
-		name: 'Chat3',
+		name: 'Breacking RSA',
 		id: 3
 	};
-	let chat4: Chat = {
-		name: 'Chat4',
-		id: 4
-	};
-	let chat5: Chat = {
-		name: 'Chat5',
-		id: 5
-	};
-	let chat6: Chat = {
-		name: 'Chat6',
-		id: 6
-	};
-	let chat_list = [chat1, chat2, chat3, chat4, chat5, chat6];
+
+	let chat_list = [chat1, chat2, chat3];
 
 	function handleClick(chat: Chat) {
 		$page.params.chat == '/messages/room';
