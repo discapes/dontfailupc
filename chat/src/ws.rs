@@ -6,8 +6,7 @@ use axum::{
     headers::Cookie,
     http::StatusCode,
     response::IntoResponse,
-    routing::get,
-    Extension, Router, TypedHeader,
+    Extension, TypedHeader,
 };
 use futures::{sink::SinkExt, stream::StreamExt};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
@@ -17,11 +16,8 @@ use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::AppState;
-pub fn api_router() -> Router {
-    Router::new().route("/:slug", get(websocket_handler))
-}
 
-async fn websocket_handler(
+pub async fn websocket_handler(
     ws: WebSocketUpgrade,
     Path(id): Path<String>,
     Extension(state): Extension<Arc<AppState>>,

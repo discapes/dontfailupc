@@ -11,7 +11,11 @@
 
 	let ws: WebSocket;
 	if (browser) {
-		ws = new WebSocket(`wss://${$page.url.host}/chat/${$page.params.slug}`);
+		ws = new WebSocket(
+			`${$page.url.origin.replace('http', 'ws').replace(':5173', ':3000')}/chat/${
+				$page.params.slug
+			}`
+		);
 		ws.onopen = function () {
 			console.log('connection opened');
 			ws.onmessage = function (e) {
