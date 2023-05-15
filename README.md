@@ -6,21 +6,28 @@
   <h4 align="center">Time is gold!! Share your class notes, build teams faster, and work for success.</h4>
 </div>
 
-<h2>Mobile App  <a href="" >Download Link</a>!</h2>
-
 </div>
 
-### 👋 Introduction
+## How to run:
 
-How to run:
+- Make sure MongoDB is running
+- websocket-server
 
-- `systemctl start mongodb`
-- set `MONGO_URL` and `AUTH0_SIGNKEY` in svelte-app/.env
-  - `npm i && npm run dev`
-- set `TOKEN_KEY` and `MONGO_DB` in chat/.env
-  - `cargo run`
-- `pip install yake`
-  - `python backend/yake/app.py`
+  - Set `TOKEN_KEY` and `MONGO_DB` in .env
+  - Do `cargo run` for development
+  - Do `cargo build --release && target/build/chat` for production
+
+- sveltekit-app
+
+  - Set `AUTH0_SIGNKEY` and `MONGO_URL` in .env
+  - Install dependencies with `npm i`
+  - Do `npm run dev` for development
+  - Do `npm run build && npm run node` for production
+
+- scoring-api
+  - Install dependencies with `pip install yake flask`
+  - Do `python flask_app.py` for development
+  - See [here](https://flask.palletsprojects.com/en/2.3.x/tutorial/deploy/) for production
 
 ### 📝 Structure
 
@@ -38,7 +45,7 @@ How to run:
 - Auth0
 - MongoDB Atlas
 
-### <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/about_me.gif" width = 25px> Contributors
+### <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/about_me.gif" width = 25px> Authors
 
 - Miika Tuominen
 - Júlia Alós

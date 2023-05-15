@@ -1,3 +1,5 @@
+#!/bin/bash
+
 curl --header "Content-Type: application/json" \
 http://localhost:5000/get_score \
 --request POST \
