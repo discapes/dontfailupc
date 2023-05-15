@@ -1,8 +1,8 @@
-import { MONGO_URL } from '$env/static/private';
+import { MONGODB_URI } from '$env/static/private';
 import { spreadAsync } from '$lib/util';
 import { MongoClient, ObjectId, type Document, type WithId } from 'mongodb';
 
-const client = new MongoClient(MONGO_URL).db('upc');
+const client = new MongoClient(MONGODB_URI).db('upc');
 
 export const db = {
 	note_favorites: client.collection('note_favorites'),

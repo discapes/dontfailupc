@@ -21,23 +21,21 @@ pub async fn websocket_handler(
     ws: WebSocketUpgrade,
     Path(id): Path<String>,
     Extension(state): Extension<Arc<AppState>>,
-    TypedHeader(auth): TypedHeader<Cookie>,
+    TypedHeader(cookies): TypedHeader<Cookie>,
 ) -> impl IntoResponse {
-    if let Some(token) = auth.get("id_token") {
-        if let Ok(_token_message) = decode::<ClaimsContent>(
+    if let (Some(token), Some(nonce)) = (cookies.get("id_token"), cookies.get("nonce")) {
+        let token_payload = decode::<ClaimsContent>(
             &token,
-            &DecodingKey::from_secret(std::env::var("TOKEN_KEY").unwrap().as_bytes()),
-            &Validation::new(Algorithm::HS256),
-        ) {
-            ws.on_upgrade(move |socket| websocket(socket, id, state))
-        } else {
-            tracing::info!("id_token invalid");
-            StatusCode::FORBIDDEN.into_response()
+            &DecodingKey::from_secret(std::env::var("AUTH0_PUBKEY").unwrap().as_bytes()),
+            &Validation::new(Algorithm::RS256),
+        );
+
+        if token_payload.map_or(false, |payload| payload.claims.nonce == nonce) {
+            return ws.on_upgrade(move |socket| websocket(socket, id, state));
         }
-    } else {
-        tracing::info!("No cookie id_token found");
-        StatusCode::FORBIDDEN.into_response()
     }
+    tracing::info!("id_token invalid");
+    StatusCode::FORBIDDEN.into_response()
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct ChatMessage {
@@ -110,4 +108,5 @@ async fn websocket(stream: WebSocket, slug: String, state: Arc<AppState>) {
 #[derive(Deserialize, Serialize)]
 struct ClaimsContent {
     pub email: String,
+    pub nonce: String,
 }

@@ -24,7 +24,7 @@ async fn main() {
 
     dotenv().ok();
 
-    let uri = std::env::var("MONGO_DB").unwrap();
+    let uri = std::env::var("MONGODB_URI").unwrap();
     let client_options = ClientOptions::parse(uri).await.unwrap();
     let client = Client::with_options(client_options).unwrap();
 

@@ -1,58 +1,60 @@
-<div align="center">
-<h1 align="center">HackUPC 2023     <img src="https://github.com/discapes/hackupc2023/blob/master/assets/biene.svg" width="25"></h1>
- 
-<img src="https://github.com/discapes/hackupc2023/blob/master/assets/icon.PNG" width="600">
-<h4 align="center">You may not be the best student in the class, but we are confident that you can make the most of your abilities and create great projects together with your most compatible classmates.</h4>
-  <h4 align="center">Time is gold!! Share your class notes, build teams faster, and work for success.</h4>
-</div>
+# Don't fail UPC - HackUPC 2023 Submission
 
-</div>
+#### You may not be the best student in the class, but we are confident that you can make the most of your abilities and create great projects together with your most compatible classmates.
+
+#### Share your class notes, build teams faster, and work for success.
 
 ## How to run:
 
-- Make sure MongoDB is running
-- websocket-server
+- Install and start MongoDB
+  - Set `MONGODB_URI` in this folder's .env (`mongodb://127.0.0.1:27017` for local)
+- Setup Auth0
 
-  - Set `TOKEN_KEY` and `MONGO_DB` in .env
-  - Do `cargo run` for development
-  - Do `cargo build --release && target/build/chat` for production
+  - Run `node svelte-app/deploy-auth0.js`
+  - Enter the Management API token from `Applications -> APIs -> Auth0 Management API -> API Explorer`
+  - Enter the Client ID for `Applications -> Applications -> Default App`
+  - Copy the end of the output into .env (this folder)
+  - Add `http://localhost:5173` and your production url to `Allowed Callback URLs`, `Allowed Logout URLs` and `Allowed Web Origins`
+
+- Setup GPT analysis
+
+  - Set `OPENAI_API_KEY` in this folder's .env to your OpenAI API key
+
+- Start websocket-server
+
+  - For development: `cargo run`
+  - For production: `cargo build --release && target/build/chat`
 
 - sveltekit-app
 
-  - Set `AUTH0_SIGNKEY` and `MONGO_URL` in .env
   - Install dependencies with `npm i`
-  - Do `npm run dev` for development
-  - Do `npm run build && npm run node` for production
+  - For development: `npm run dev`
+  - For production: `npm run build && npm run node`
 
 - scoring-api
-  - Install dependencies with `pip install yake flask`
-  - Do `python flask_app.py` for development
-  - See [here](https://flask.palletsprojects.com/en/2.3.x/tutorial/deploy/) for production
+  - Install dependencies with `pip install yake flask waitress`
+  - For development: `python flask_app.py`
+  - For production: `waitress-serve --port 5000 flask-app:app`
 
-### 📝 Structure
+## Adminstration
 
-### 😄 How it works
-
-<div>
- <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/Auth0_login.gif" width = 49%>
- <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/courses.gif" width = 49%>
- </div>
-
-### Additional challenges (MLH)
-
-- GitHub
-- Domain.com
-- Auth0
-- MongoDB Atlas
+After signing in into the app, set your own users app_metadata in Auth0 User Management to `{"admin":true}`. You can now edit course information and post the source text for lectures.
 
 ### <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/about_me.gif" width = 25px> Authors
 
-- Miika Tuominen
-- Júlia Alós
-- Àlex Amat
-- Alessio Sordo
+- Miika Tuominen (sveltekit-app)
+- Júlia Alós (websocket-server)
+- Àlex Amat (scoring-api Flask code)
+- Alessio Sordo (scoring-api neutral network)
 
 <div align="center">
   <img  src="https://github.com/discapes/hackupc2023/blob/master/assets/grid-snake.svg"
        alt="snake" />
 </div>
+
+### Preview
+
+<div>
+ <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/Auth0_login.gif" width = 49%>
+ <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/courses.gif" width = 49%>
+ </div>

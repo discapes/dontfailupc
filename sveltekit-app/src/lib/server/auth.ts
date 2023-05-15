@@ -1,13 +1,13 @@
-import { AUTH0_SIGNKEY } from '$env/static/private';
+import { AUTH0_PUBKEY } from '$env/static/private';
 import type { Auth } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 
 export function authorize(token: string, nonce: string): Auth | null {
 	try {
-		const payload: Auth = jwt.verify(token, AUTH0_SIGNKEY, {
+		const payload: Auth = jwt.verify(token, AUTH0_PUBKEY, {
 			nonce,
-			algorithms: ['HS256']
+			algorithms: ['RS256']
 		}) as any;
 		// console.log('id token payload:', payload);
 		return payload;

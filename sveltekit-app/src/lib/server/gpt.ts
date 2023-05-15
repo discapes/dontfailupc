@@ -1,4 +1,4 @@
-import { OPENAI_KEY } from '$env/static/private';
+import { OPENAI_API_KEY } from '$env/static/private';
 
 export async function calculateKeywordDiff(source: string, note: string): Promise<number> {
 	const res = await fetch('http://127.0.0.1:5000/get_score', {
@@ -16,7 +16,7 @@ export async function calculateNoteScore(
 ): Promise<{ score: number; reason: string }> {
 	const endpoint = 'https://api.openai.com/v1/chat/completions';
 	const headers = {
-		Authorization: 'Bearer ' + OPENAI_KEY,
+		Authorization: 'Bearer ' + OPENAI_API_KEY,
 		'Content-Type': 'application/json'
 	};
 	const json = {
