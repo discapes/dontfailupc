@@ -6,8 +6,18 @@
 
 ## How to run:
 
-- Install and start MongoDB
+- Setup MongoDB
+
   - Set `MONGODB_URI` in this folder's .env (`mongodb://127.0.0.1:27017` for local)
+
+- Setup Nginx as a reverse proxy
+
+  - Install Nginx
+  - Copy the configuration from `nginx.conf`
+  - Replace occurences of dontfailupc.tech with your own
+  - Run Certbot to get your certificates
+  - Start Nginx
+
 - Setup Auth0
 
   - Run `node svelte-app/deploy-auth0.js`
@@ -36,11 +46,11 @@
   - For development: `python flask_app.py`
   - For production: `waitress-serve --port 5000 flask-app:app`
 
-## Adminstration
+### Adminstration
 
 After signing in into the app, set your own users app_metadata in Auth0 User Management to `{"admin":true}`. You can now edit course information and post the source text for lectures.
 
-### <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/about_me.gif" width = 25px> Authors
+### <img src = "./assets/about_me.gif" width = 25px> Authors
 
 - Miika Tuominen (sveltekit-app)
 - Júlia Alós (websocket-server)
@@ -48,13 +58,13 @@ After signing in into the app, set your own users app_metadata in Auth0 User Man
 - Alessio Sordo (scoring-api neutral network)
 
 <div align="center">
-  <img  src="https://github.com/discapes/hackupc2023/blob/master/assets/grid-snake.svg"
+  <img  src="./assets/grid-snake.svg"
        alt="snake" />
 </div>
 
 ### Preview
 
 <div>
- <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/Auth0_login.gif" width = 49%>
- <img src = "https://github.com/discapes/hackupc2023/blob/master/assets/courses.gif" width = 49%>
+ <img src = "./assets/Auth0_login.gif" width = 49%>
+ <img src = "./assets/courses.gif" width = 49%>
  </div>
