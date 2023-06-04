@@ -1,15 +1,30 @@
-import { MONGODB_URI } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { spreadAsync } from '$lib/util';
-import { MongoClient, ObjectId, type Document, type WithId } from 'mongodb';
+import { MongoClient, ObjectId, type Document, type WithId, Db } from 'mongodb';
 
-const client = new MongoClient(MONGODB_URI).db('upc');
+let mongoDb: null | Db = null;
+
+function client() {
+	if (!mongoDb) mongoDb = new MongoClient(env.MONGODB_URI).db('upc');
+	return mongoDb;
+}
 
 export const db = {
-	note_favorites: client.collection('note_favorites'),
-	users: client.collection('users'),
-	courses: client.collection('courses'),
-	notes: client.collection('notes'),
-	chat: client.collection('chat')
+	get note_favorites() {
+		return client().collection('note_favorites');
+	},
+	get users() {
+		return client().collection('users');
+	},
+	get courses() {
+		return client().collection('courses');
+	},
+	get notes() {
+		return client().collection('notes');
+	},
+	get chat() {
+		return client().collection('chat');
+	}
 };
 
 export async function spreadMongo<T>(iter: AsyncIterable<WithId<Document>>): Promise<T[]> {

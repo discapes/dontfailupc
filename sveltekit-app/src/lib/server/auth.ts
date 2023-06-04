@@ -1,11 +1,11 @@
-import { AUTH0_PUBKEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import type { Auth } from '$lib/types';
 import type { Cookies } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 
 export function authorize(token: string, nonce: string): Auth | null {
 	try {
-		const payload: Auth = jwt.verify(token, AUTH0_PUBKEY, {
+		const payload: Auth = jwt.verify(token, env.AUTH0_PUBKEY, {
 			nonce,
 			algorithms: ['RS256']
 		}) as any;

@@ -23,19 +23,33 @@ pub async fn websocket_handler(
     Extension(state): Extension<Arc<AppState>>,
     TypedHeader(cookies): TypedHeader<Cookie>,
 ) -> impl IntoResponse {
+    let pub_key = std::env::var("AUTH0_PUBKEY").unwrap();
+
     if let (Some(token), Some(nonce)) = (cookies.get("id_token"), cookies.get("nonce")) {
-        let token_payload = decode::<ClaimsContent>(
+        let token_result = decode::<ClaimsContent>(
             &token,
-            &DecodingKey::from_secret(std::env::var("AUTH0_PUBKEY").unwrap().as_bytes()),
+            &DecodingKey::from_rsa_pem(pub_key.as_bytes())
+                .map_err(|e| panic!("Failed to decode Auth0 public key: {e} '{pub_key}'"))
+                .unwrap(),
             &Validation::new(Algorithm::RS256),
         );
 
-        if token_payload.map_or(false, |payload| payload.claims.nonce == nonce) {
-            return ws.on_upgrade(move |socket| websocket(socket, id, state));
+        // todo check nonce
+        match token_result {
+            Ok(token_payload) => ws.on_upgrade(move |socket| websocket(socket, id, state)),
+            Err(e) => {
+                tracing::error!("Couldn't verify token: {e}");
+                StatusCode::FORBIDDEN.into_response()
+            }
         }
+    } else {
+        let missing: Vec<&str> = vec!["id_token", "nonce"]
+            .into_iter()
+            .filter(|s| cookies.get(s).is_none())
+            .collect();
+        tracing::info!("{} missing from request", missing.join(", "));
+        StatusCode::FORBIDDEN.into_response()
     }
-    tracing::info!("id_token invalid");
-    StatusCode::FORBIDDEN.into_response()
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct ChatMessage {

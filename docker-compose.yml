@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo
+  sveltekit-app:
+    build: sveltekit-app
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017
+      - SCORING_API_URL=http://scoring-api:5000/get_score
+      - AUTH0_PUBKEY
+      - AUTH0_DOMAIN
+      - OPENAI_API_KEY
+      - ORIGIN_URL
+  scoring-api:
+    build: scoring-api  
+  websocket-server:
+    build: websocket-server
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017
+      - AUTH0_PUBKEY
+  nginx:
+    image: nginx
+    volumes:
+      - './fullchain.pem:/etc/letsencrypt/live/dontfailupc.tech/fullchain.pem'
+      - './privkey.pem:/etc/letsencrypt/live/dontfailupc.tech/privkey.pem'
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    ports:
+      - 80:80
+      - 443:443

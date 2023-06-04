@@ -6,45 +6,29 @@
 
 ## How to run:
 
-- Setup MongoDB
+Authorizing admins relies on an Auth0 action that adds app_metadata for each user to their id_token. To do this:
 
-  - Set `MONGODB_URI` in this folder's .env (`mongodb://127.0.0.1:27017` for local)
+- Run `node svelte-app/deploy-auth0.js`
+- Enter the Management API token from `Applications -> APIs -> Auth0 Management API -> API Explorer`
+- Enter the Client ID for `Applications -> Applications -> Default App`
+- Add your production url to `Allowed Callback URLs`, `Allowed Logout URLs` and `Allowed Web Origins`
 
-- Setup Nginx as a reverse proxy
+You also need the certificates for your domain. Add them to this folder as fullchain.pem and privkey.pem
 
-  - Install Nginx
-  - Copy the configuration from `nginx.conf`
-  - Replace occurences of dontfailupc.tech with your own
-  - Run Certbot to get your certificates
-  - Start Nginx
+In your .env, set the following variables:
+- AUTH0_PUBKEY - use `openssl x509 -in mycert.pem -noout -pubkey`, where mycert.pem is the AUTH0_CERT from deploy-auth0.js
+- AUTH0_DOMAIN - from deploy-auth0.js
+- OPENAI_API_KEY - for grading the notes
+- ORIGIN_URL - what the browser sees the URL as (used for SvelteKit's CSRF protection)
 
-- Setup Auth0
+Run `docker compose up --abort-on-container-exit`
 
-  - Run `node svelte-app/deploy-auth0.js`
-  - Enter the Management API token from `Applications -> APIs -> Auth0 Management API -> API Explorer`
-  - Enter the Client ID for `Applications -> Applications -> Default App`
-  - Copy the end of the output into .env (this folder)
-  - Add `http://localhost:5173` and your production url to `Allowed Callback URLs`, `Allowed Logout URLs` and `Allowed Web Origins`
+## Development
 
-- Setup GPT analysis
-
-  - Set `OPENAI_API_KEY` in this folder's .env to your OpenAI API key
-
-- Start websocket-server
-
-  - For development: `cargo run`
-  - For production: `cargo build --release && target/build/chat`
-
-- sveltekit-app
-
-  - Install dependencies with `npm i`
-  - For development: `npm run dev`
-  - For production: `npm run build && npm run node`
-
-- scoring-api
-  - Install dependencies with `pip install yake flask waitress`
-  - For development: `python flask_app.py`
-  - For production: `waitress-serve --port 5000 flask-app:app`
+See docker-compose.yml for the environment variables you need to set when running the development servers outside of docker-compose. When developing one of the services, you can run the other services with development servers or use their Dockerfiles. The commands for running a development server are listed below:
+- websocket-serve: `cargo run`
+- sveltekit-app: `npm run dev`
+- scoring-api: `python flask_app.py`
 
 ### Adminstration
 

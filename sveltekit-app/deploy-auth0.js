@@ -88,8 +88,7 @@ console.log('Hook action response:', hookActionResponse);
 
 console.log('Action successfully deployed');
 
-console.log(`Add the following to your .env file (repository root)\n`);
-console.log(`AUTH0_PUBKEY=${signingKey.replaceAll('\r\n', '')}`);
+console.log(`AUTH0_CERT=${signingKey.replaceAll('\r\n', '')}`);
 console.log(`AUTH0_DOMAIN=${domain}`);
 
 exit(0);
